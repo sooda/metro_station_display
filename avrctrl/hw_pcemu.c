@@ -1,0 +1,2 @@
+void hw_init() {
+}

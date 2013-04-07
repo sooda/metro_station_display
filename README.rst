@@ -10,6 +10,7 @@ Reverse-engineerattua tavaraa ja uutta ohjauskoodia HSL:n vanhoille oransseille 
 * printline.c on teensy++ 2.0:lla testattu palikka oksentamaan pikselidataa lcd-väylille. Toimii ainakin tökkäämällä nastat 8155-piirin tilalle sopiviin nastoihin.
 * printline_to_header.py käpistelee bittejä printline.c:tä varten.
 * printline_decoder.py emuloi näyttöä, vaatii pygamen.
+* avrctrl/: softaa syöttämään grafiikkaa teensyn virtuaalisarjaportin yli suoraan lcd-väylälle.
 
 Yleishyödyllistä kivaa:
 

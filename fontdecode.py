@@ -1,8 +1,11 @@
 #!/usr/bin/python2
 # encoding: utf-8
 # Tämä dekoodaa fontit alkuperäisestä binääristä ja tulostaa bittivirtaa
-# näytettäväksi printline_decoder.py:llä.
-# käyttö: ./fontdecode.py program.bin H e l l o ' ' w o r l d | ./printline_decoder.py
+# näytettäväksi printline_decoder.py:llä tai tuupattavaksi hardikselle.
+# käyttö: ./fontdecode.py <koodibinääri> <segmenttien määrä> <teksti>
+# esim. ./fontdecode.py program.bin 4 'Hello world' | ./printline_decoder.py
+# jos teksti on tyhjä, tulostetaan fonttikarttarivi, jonka numero tulee tekstin jälkeen
+# esim. ./fontdecode.py program.bin 4 '' 2 | ./printline_decoder.py
 from sys import argv
 
 def extract_glyphs(rawdata):
@@ -47,15 +50,17 @@ def build_charbits(glyphs, char):
 	bot = "".join(map(revstr, map(low11bits, strwords[7:12])))
 	return (top, bot)
 
-def pad_printline(toprow, botrow):
+def pad_printline(segments, toprow, botrow):
 	"""Paddaa rivit oikean mittaisiksi jos annettu data ei ole tarpeeksi pitkä, syötteenä max. yksi rivi"""
-	segments = 4
 	segcolumns = 24
 	toprows = 12
 	botrows = 11
 
 	topbits = segments * segcolumns * toprows
 	botbits = segments * segcolumns * botrows
+	if len(toprow) > topbits: # assume bottom length is consistent
+		raise ValueError("Too much bits to display (%.2f %% used)" %
+				(100.0 * len(toprow) / topbits))
 
 	tops = toprow + "0" * (topbits - len(toprow))
 	bots = botrow + "0" * (botbits - len(botrow))
@@ -66,13 +71,16 @@ def main():
 	"""Monta merkkiä yhdelle riville"""
 	rawdata = open(argv[1], "rb").read()
 	glyphs = extract_glyphs(rawdata)
-	chars = argv[2:]
-	if chars[0] == "line":
-		startoff = int(chars[1])
-		charsperline = 19
-		chars = map(chr, range(charsperline*startoff, min(255, charsperline*startoff + charsperline)))
+	segments = int(argv[2])
+	chars = argv[3]
+	if chars == "": # erikoismoodi yhden fonttirivin tulostamiseksi
+		offset = int(argv[4])
+		perline = 19
+		start = perline * offset
+		end = min(255, perline * (offset + 1))
+		chars = map(chr, range(start, end))
 	tops, bots = map("".join, zip(*[build_charbits(glyphs, x) for x in chars]))
-	print pad_printline(tops, bots)
+	print pad_printline(segments, tops, bots)
 
 if __name__ == "__main__":
 	main()

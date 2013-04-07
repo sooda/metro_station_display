@@ -1,0 +1,9 @@
+TARGET := ctrlascii
+SRC := $(TARGET).c lcd_stream.c lcd_framebuf.c lcd_emu.c hw_pcemu.c
+# ei riippuvuuksia koska laiskuus
+# touch -> ei koskaan up to date ettei vahinkoja
+$(TARGET): $(SRC)
+	gcc -o $(TARGET) -std=c99 -Wall -Wextra -Werror -DLINUX $(SRC)
+	touch $(TARGET).c
+clean:
+	rm -f $(TARGET)
