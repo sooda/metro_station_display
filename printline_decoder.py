@@ -24,6 +24,8 @@ botSize = 4 * 24 * 11
 totbits = topSize + botSize
 # LSB aina ensimmäisenä, eli tavuina ajatellen bitit ovat väärin päin
 bits = sys.stdin.read().replace('\n', '')
+if len(bits) == 0:
+    sys.exit()
 numlines = len(bits) / totbits
 
 topstuffs = []
@@ -34,7 +36,7 @@ for n in range(numlines):
     topstuff = []
     for i in xrange(start, start+topSize, 12):
         topstuff.append(bits[i:i+12])
-    # ylärivin bitit lähetetään lopusta alkuun
+    # ylärivin *sarakkeet* lähetetään lopusta alkuun, bitit niissä oikein päin
     topstuff = list(reversed(topstuff))
 
     botstuff = []
